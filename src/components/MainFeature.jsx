@@ -137,10 +137,12 @@ function MainFeature() {
           if (currentPlayer === 1) {
             newScores.player1 += 1;
           } else {
-            newScores.player2 += 1; 
+            newScores.player2 += 1;
           } else if (currentPlayer === 3) {
             newScores.player3 += 1;
-          } else newScores.player4 += 1;
+          } else if (currentPlayer === 4) {
+            newScores.player4 += 1;
+          }
           boxesCompleted = true;
           
           // Show toast for completing a box
@@ -167,6 +169,8 @@ function MainFeature() {
           } else if (currentPlayer === 2) {
             newScores.player2 += 1;
           } else if (currentPlayer === 3) {
+          } else if (currentPlayer === 4) {
+            newScores.player4 += 1;
             newScores.player3 += 1;
           }
           boxesCompleted = true;
@@ -195,6 +199,8 @@ function MainFeature() {
           } else if (currentPlayer === 2) {
             newScores.player2 += 1;
           } else if (currentPlayer === 3) {
+          } else if (currentPlayer === 4) {
+            newScores.player4 += 1;
             newScores.player3 += 1;
           }
           boxesCompleted = true;
@@ -223,6 +229,8 @@ function MainFeature() {
           } else if (currentPlayer === 2) {
             newScores.player2 += 1;
           } else if (currentPlayer === 3) {
+          } else if (currentPlayer === 4) {
+            newScores.player4 += 1;
             newScores.player3 += 1;
           }
           boxesCompleted = true;
