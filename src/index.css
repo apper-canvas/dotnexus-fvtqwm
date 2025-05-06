@@ -51,15 +51,15 @@
   }
   
   .btn-outline {
-
+    @apply border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700;
+  }
+  
   .btn-tertiary {
     @apply bg-tertiary text-white hover:bg-tertiary-dark focus:ring-tertiary;
   }
-
+  
   .btn-quaternary {
     @apply bg-quaternary text-white hover:bg-quaternary-dark focus:ring-quaternary;
-  }
-    @apply border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700;
   }
   
   .card {
