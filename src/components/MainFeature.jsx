@@ -8,7 +8,8 @@ function MainFeature() {
   const [gameStarted, setGameStarted] = useState(false);
   const [boardSize, setBoardSize] = useState(4); // Default to 4x4 grid
   const [currentPlayer, setCurrentPlayer] = useState(1); // Player 1 starts
-  const [scores, setScores] = useState({ player1: 0, player2: 0 });
+  const [playerCount, setPlayerCount] = useState(2); // Default to 2 players
+  const [scores, setScores] = useState({ player1: 0, player2: 0, player3: 0, player4: 0 });
   const [winner, setWinner] = useState(null);
   
   // Board state
@@ -53,7 +54,12 @@ function MainFeature() {
     setVerticalLines(newVLines);
     setBoxes(newBoxes);
     setCurrentPlayer(1);
-    setScores({ player1: 0, player2: 0 });
+    setScores({ 
+      player1: 0, 
+      player2: 0, 
+      player3: playerCount > 2 ? 0 : null, 
+      player4: playerCount > 2 ? 0 : null 
+    });
     setWinner(null);
     setGameStarted(true);
     
@@ -91,8 +97,15 @@ function MainFeature() {
     
     // If no box completed, switch player
     if (!boxCompleted) {
-      const nextPlayer = currentPlayer === 1 ? 2 : 1;
-      setCurrentPlayer(nextPlayer);
+      let nextPlayer;
+      if (playerCount === 2) {
+        nextPlayer = currentPlayer === 1 ? 2 : 1;
+      } else {
+        // 4 player mode
+        nextPlayer = currentPlayer === 4 ? 1 : currentPlayer + 1;
+      }
+      
+      setCurrentPlayer(nextPlayer); 
       toast.info(`Player ${nextPlayer}'s turn`, { autoClose: 1500 });
     } else {
       // Box completed, check if game is over
@@ -124,8 +137,10 @@ function MainFeature() {
           if (currentPlayer === 1) {
             newScores.player1 += 1;
           } else {
-            newScores.player2 += 1;
-          }
+            newScores.player2 += 1; 
+          } else if (currentPlayer === 3) {
+            newScores.player3 += 1;
+          } else newScores.player4 += 1;
           boxesCompleted = true;
           
           // Show toast for completing a box
@@ -149,8 +164,10 @@ function MainFeature() {
           // Update score
           if (currentPlayer === 1) {
             newScores.player1 += 1;
-          } else {
+          } else if (currentPlayer === 2) {
             newScores.player2 += 1;
+          } else if (currentPlayer === 3) {
+            newScores.player3 += 1;
           }
           boxesCompleted = true;
           
@@ -175,8 +192,10 @@ function MainFeature() {
           // Update score
           if (currentPlayer === 1) {
             newScores.player1 += 1;
-          } else {
+          } else if (currentPlayer === 2) {
             newScores.player2 += 1;
+          } else if (currentPlayer === 3) {
+            newScores.player3 += 1;
           }
           boxesCompleted = true;
           
@@ -201,8 +220,10 @@ function MainFeature() {
           // Update score
           if (currentPlayer === 1) {
             newScores.player1 += 1;
-          } else {
+          } else if (currentPlayer === 2) {
             newScores.player2 += 1;
+          } else if (currentPlayer === 3) {
+            newScores.player3 += 1;
           }
           boxesCompleted = true;
           
@@ -224,17 +245,29 @@ function MainFeature() {
   const checkGameOver = () => {
     // Calculate total possible boxes
     const totalBoxes = boardSize * boardSize;
+    const totalFilledBoxes = playerCount === 2 
+      ? scores.player1 + scores.player2 
+      : scores.player1 + scores.player2 + scores.player3 + scores.player4;
     
     // Check if all boxes are filled
-    if (scores.player1 + scores.player2 >= totalBoxes) {
+    if (totalFilledBoxes >= totalBoxes) {
       // Determine winner
       let gameWinner;
-      if (scores.player1 > scores.player2) {
-        gameWinner = 1;
-      } else if (scores.player2 > scores.player1) {
-        gameWinner = 2;
-      } else {
-        gameWinner = 0; // Draw
+      
+      if (playerCount === 2) {
+        if (scores.player1 > scores.player2) {
+          gameWinner = 1;
+        } else if (scores.player2 > scores.player1) {
+          gameWinner = 2;
+        } else {
+          gameWinner = 0; // Draw
+        }
+      } else { // 4 player mode
+        const maxScore = Math.max(scores.player1, scores.player2, scores.player3, scores.player4);
+        const winners = [scores.player1, scores.player2, scores.player3, scores.player4]
+          .filter(score => score === maxScore).length;
+        
+        gameWinner = winners > 1 ? 0 : [scores.player1, scores.player2, scores.player3, scores.player4].indexOf(maxScore) + 1;
       }
       
       setWinner(gameWinner);
@@ -297,7 +330,9 @@ function MainFeature() {
                     : box === 2 
                       ? 'bg-secondary/30' 
                       : 'bg-transparent'
-                }`}
+                      : box === 3 
+                        ? 'bg-tertiary/30' 
+                        : box === 4 ? 'bg-quaternary/30' : 'bg-transparent'
                 style={{
                   left: (colIndex + 1) * gridSize - gridSize / 2,
                   top: (rowIndex + 1) * gridSize - gridSize / 2,
@@ -307,7 +342,9 @@ function MainFeature() {
               >
                 {box !== null && (
                   <div className="flex items-center justify-center h-full w-full">
-                    <span className={`text-xs font-bold ${box === 1 ? 'text-primary-dark' : 'text-secondary-dark'}`}>
+                    <span className={`text-xs font-bold ${box === 1 ? 'text-primary-dark' : 
+                      box === 2 ? 'text-secondary-dark' : 
+                      box === 3 ? 'text-tertiary-dark' : 'text-quaternary-dark'}`}>
                       P{box}
                     </span>
                   </div>
@@ -340,8 +377,12 @@ function MainFeature() {
                     ? 'bg-primary h-2' 
                     : line === 2 
                       ? 'bg-secondary h-2' 
-                      : hoverLine.type === 'horizontal' && hoverLine.row === rowIndex && hoverLine.col === colIndex
-                        ? currentPlayer === 1 ? 'bg-primary/50 h-2' : 'bg-secondary/50 h-2'
+                      : line === 3
+                        ? 'bg-tertiary h-2'
+                        : line === 4
+                          ? 'bg-quaternary h-2'
+                          : hoverLine.type === 'horizontal' && hoverLine.row === rowIndex && hoverLine.col === colIndex
+                        ? currentPlayer === 1 ? 'bg-primary/50 h-2' : currentPlayer === 2 ? 'bg-secondary/50 h-2' : currentPlayer === 3 ? 'bg-tertiary/50 h-2' : 'bg-quaternary/50 h-2'
                         : 'bg-surface-300 dark:bg-surface-600'
                 }`}
                 style={{
@@ -367,8 +408,12 @@ function MainFeature() {
                     ? 'bg-primary w-2' 
                     : line === 2 
                       ? 'bg-secondary w-2' 
-                      : hoverLine.type === 'vertical' && hoverLine.row === rowIndex && hoverLine.col === colIndex
-                        ? currentPlayer === 1 ? 'bg-primary/50 w-2' : 'bg-secondary/50 w-2'
+                      : line === 3
+                        ? 'bg-tertiary w-2'
+                        : line === 4
+                          ? 'bg-quaternary w-2'
+                          : hoverLine.type === 'vertical' && hoverLine.row === rowIndex && hoverLine.col === colIndex
+                        ? currentPlayer === 1 ? 'bg-primary/50 w-2' : currentPlayer === 2 ? 'bg-secondary/50 w-2' : currentPlayer === 3 ? 'bg-tertiary/50 w-2' : 'bg-quaternary/50 w-2'
                         : 'bg-surface-300 dark:bg-surface-600'
                 }`}
                 style={{
@@ -413,7 +458,20 @@ function MainFeature() {
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <div className="flex items-center">
                 <label htmlFor="board-size" className="mr-2 text-sm font-medium text-surface-700 dark:text-surface-300">
-                  Board Size:
+                  Board:
+                </label>
+                <select
+                  id="player-count"
+                  value={playerCount}
+                  onChange={(e) => setPlayerCount(parseInt(e.target.value))}
+                  className="input py-1 px-2 text-sm w-auto mr-4"
+                >
+                  <option value="2">2 Players</option>
+                  <option value="4">4 Players</option>
+                </select>
+                
+                <label htmlFor="board-size" className="mr-2 text-sm font-medium text-surface-700 dark:text-surface-300">
+                  Size:
                 </label>
                 <select
                   id="board-size"
@@ -479,11 +537,11 @@ function MainFeature() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-surface-600 dark:text-surface-300">Boxes Claimed:</span>
-                    <span className="font-medium">{scores.player1 + scores.player2}</span>
+                    <span className="font-medium">{playerCount === 2 ? scores.player1 + scores.player2 : scores.player1 + scores.player2 + scores.player3 + scores.player4}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-surface-600 dark:text-surface-300">Boxes Remaining:</span>
-                    <span className="font-medium">{boardSize * boardSize - (scores.player1 + scores.player2)}</span>
+                    <span className="font-medium">{boardSize * boardSize - (playerCount === 2 ? scores.player1 + scores.player2 : scores.player1 + scores.player2 + scores.player3 + scores.player4)}</span>
                   </div>
                 </div>
               </div>
@@ -536,6 +594,56 @@ function MainFeature() {
                   </div>
                 </div>
                 
+                {playerCount > 2 && (
+                  <>
+                    <div className={`p-3 rounded-lg ${
+                      currentPlayer === 3 && !winner
+                        ? 'bg-tertiary/10 border border-tertiary/30 ring-2 ring-tertiary/20'
+                        : 'bg-surface-100 dark:bg-surface-700'
+                    } transition-all`}>
+                      <div className="flex items-center mb-2">
+                        <div className="w-8 h-8 rounded-full bg-tertiary flex items-center justify-center">
+                          <UserIcon className="w-4 h-4 text-white" />
+                        </div>
+                        <h4 className="ml-2 font-semibold">Player 3</h4>
+                        {winner === 3 && (
+                          <div className="ml-auto flex items-center text-yellow-500">
+                            <TrophyIcon className="w-5 h-5 mr-1" />
+                            <span className="text-sm font-bold">Winner!</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-surface-600 dark:text-surface-400 text-sm">Boxes Claimed:</span>
+                        <span className="text-lg font-bold text-tertiary">{scores.player3}</span>
+                      </div>
+                    </div>
+
+                    <div className={`p-3 rounded-lg ${
+                      currentPlayer === 4 && !winner
+                        ? 'bg-quaternary/10 border border-quaternary/30 ring-2 ring-quaternary/20'
+                        : 'bg-surface-100 dark:bg-surface-700'
+                    } transition-all`}>
+                      <div className="flex items-center mb-2">
+                        <div className="w-8 h-8 rounded-full bg-quaternary flex items-center justify-center">
+                          <UsersIcon className="w-4 h-4 text-white" />
+                        </div>
+                        <h4 className="ml-2 font-semibold">Player 4</h4>
+                        {winner === 4 && (
+                          <div className="ml-auto flex items-center text-yellow-500">
+                            <TrophyIcon className="w-5 h-5 mr-1" />
+                            <span className="text-sm font-bold">Winner!</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-surface-600 dark:text-surface-400 text-sm">Boxes Claimed:</span>
+                        <span className="text-lg font-bold text-quaternary">{scores.player4}</span>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {winner === 0 && (
                   <div className="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700">
                     <div className="flex items-center justify-center">

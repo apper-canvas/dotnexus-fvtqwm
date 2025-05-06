@@ -20,6 +20,10 @@ export default {
         accent: '#06B6D4',
         surface: {
           50: '#f8fafc',   // Lightest
+        tertiary: { DEFAULT: '#9C27B0', dark: '#7B1FA2', light: '#CE93D8' },
+        quaternary: { DEFAULT: '#F57C00', dark: '#E65100', light: '#FFB74D' },
+        success: { DEFAULT: '#4CAF50', dark: '#388E3C', light: '#A5D6A7' },
+        warning: { DEFAULT: '#FFC107', dark: '#FFA000', light: '#FFE082' },
           100: '#f1f5f9',
           200: '#e2e8f0',
           300: '#cbd5e1',
