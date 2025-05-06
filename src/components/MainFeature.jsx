@@ -274,7 +274,7 @@ function MainFeature() {
     const gridSize = 36; // Size of each grid cell in pixels
     
     return (
-      <div 
+      <div
         className="relative mx-auto"
         style={{
           width: (boardSize + 1) * gridSize,
@@ -282,7 +282,7 @@ function MainFeature() {
         }}
       >
         {/* Background grid */}
-        <div 
+        <div
           className="absolute inset-0 bg-surface-50 dark:bg-surface-800 rounded-lg shadow-card"
           style={{ padding: gridSize / 2 }}
         >
@@ -321,10 +321,10 @@ function MainFeature() {
             row.map((dot, colIndex) => (
               <div
                 key={`dot-${rowIndex}-${colIndex}`}
-                className="absolute dot"
+                className="absolute dot transform -translate-x-1/2 -translate-y-1/2"
                 style={{
-                  left: colIndex * gridSize - 8,
-                  top: rowIndex * gridSize - 8,
+                  left: colIndex * gridSize,
+                  top: rowIndex * gridSize,
                 }}
               />
             ))
@@ -335,19 +335,19 @@ function MainFeature() {
             row.map((line, colIndex) => (
               <button
                 key={`h-line-${rowIndex}-${colIndex}`}
-                className={`absolute line line-horizontal transition-colors ${
+                className={`absolute line line-horizontal transition-all hover:h-2 ${
                   line === 1 
-                    ? 'bg-primary' 
+                    ? 'bg-primary h-2' 
                     : line === 2 
-                      ? 'bg-secondary' 
+                      ? 'bg-secondary h-2' 
                       : hoverLine.type === 'horizontal' && hoverLine.row === rowIndex && hoverLine.col === colIndex
-                        ? currentPlayer === 1 ? 'bg-primary/50' : 'bg-secondary/50'
+                        ? currentPlayer === 1 ? 'bg-primary/50 h-2' : 'bg-secondary/50 h-2'
                         : 'bg-surface-300 dark:bg-surface-600'
                 }`}
                 style={{
-                  left: colIndex * gridSize + 8,
+                  left: colIndex * gridSize + 3,
                   top: rowIndex * gridSize,
-                  width: gridSize - 16,
+                  width: gridSize - 6,
                 }}
                 onClick={() => handleLineClick('horizontal', rowIndex, colIndex)}
                 onMouseEnter={() => handleLineHover('horizontal', rowIndex, colIndex)}
@@ -362,19 +362,19 @@ function MainFeature() {
             row.map((line, colIndex) => (
               <button
                 key={`v-line-${rowIndex}-${colIndex}`}
-                className={`absolute line line-vertical transition-colors ${
+                className={`absolute line line-vertical transition-all hover:w-2 ${
                   line === 1 
-                    ? 'bg-primary' 
+                    ? 'bg-primary w-2' 
                     : line === 2 
-                      ? 'bg-secondary' 
+                      ? 'bg-secondary w-2' 
                       : hoverLine.type === 'vertical' && hoverLine.row === rowIndex && hoverLine.col === colIndex
-                        ? currentPlayer === 1 ? 'bg-primary/50' : 'bg-secondary/50'
+                        ? currentPlayer === 1 ? 'bg-primary/50 w-2' : 'bg-secondary/50 w-2'
                         : 'bg-surface-300 dark:bg-surface-600'
                 }`}
                 style={{
                   left: colIndex * gridSize,
-                  top: rowIndex * gridSize + 8,
-                  height: gridSize - 16,
+                  top: rowIndex * gridSize + 3,
+                  height: gridSize - 6,
                 }}
                 onClick={() => handleLineClick('vertical', rowIndex, colIndex)}
                 onMouseEnter={() => handleLineHover('vertical', rowIndex, colIndex)}

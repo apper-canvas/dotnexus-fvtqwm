@@ -64,17 +64,17 @@
   }
   
   .dot {
-    @apply w-4 h-4 rounded-full bg-surface-400 dark:bg-surface-500 transition-all;
+    @apply w-6 h-6 rounded-full bg-surface-400 dark:bg-surface-500 transition-all border-2 border-white dark:border-surface-700 shadow-sm;
   }
   
   .dot-active {
-    @apply bg-primary dark:bg-primary-light scale-110;
+    @apply bg-primary dark:bg-primary-light scale-110 shadow-md border-primary-light dark:border-primary;
   }
   
   .line {
-    @apply bg-surface-300 dark:bg-surface-600 transition-all rounded-full;
+    @apply bg-surface-300 dark:bg-surface-600 transition-all rounded-full hover:shadow-sm;
   }
-  
+
   .line-horizontal {
     @apply h-1 my-1.5;
   }
